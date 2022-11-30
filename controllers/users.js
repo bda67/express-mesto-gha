@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { setErrors, NotFound } = require('../utils/constants');
+const { setErrors, NotFound } = require('../utils/errors');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -12,7 +12,7 @@ const getUserById = (req, res) => {
     .orFail(() => {
       throw new NotFound('Пользователя с указанным id не существует');
     })
-    .then((user) => res.send({
+    .then((user) => res.status(200).send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
