@@ -10,7 +10,7 @@ const getUsers = (req, res) => {
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new NotFound('Такого пользователя не существует');
+      throw new NotFound('Пользователя с указанным id не существует');
     })
     .then((user) => res.send({
       name: user.name,

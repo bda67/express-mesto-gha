@@ -32,9 +32,9 @@ const likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFound('Карточка с таки id не найдена');
+      throw new NotFound('Карточка с таким id не найдена');
     })
-    .then((card) => res.status(200).send({ card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => setErrors(res, err));
 };
 
@@ -45,9 +45,9 @@ const dislikeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFound('Карточка с таки id не найдена');
+      throw new NotFound('Карточка с таким id не найдена');
     })
-    .then((card) => res.status(200).send({ card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => setErrors(res, err));
 };
 
