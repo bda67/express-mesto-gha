@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const { sendErrors, NotFound } = require('../utils/errors');
-const CREATED_CODE = require('../utils/constants');
+const { CREATED_CODE } = require('../utils/constants');
 
 const getUsers = (req, res) => {
   User.find({})
