@@ -1,15 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+/*const bodyParser = require('body-parser');*/
 
 const { PORT = 3000 } = process.env;
 const routerCards = require('./routes/cards');
-const { routerUsers } = require('./routes/users');
+const routerUsers = require('./routes/users');
 
 const app = express();
-app.use(
+/*app.use(
   bodyParser.urlencoded({ extended: true }),
-);
+);*/
 
 app.use((req, res, next) => {
   req.user = {
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use('/cards', routerCards);
 app.use('/users', routerUsers);
@@ -34,9 +34,6 @@ mongoose.connect(
   {
     useNewUrlParser: true,
   },
-  () => {
-    app.listen(PORT, () => {
-      console.log(`App listening on ${PORT}`);
-    });
-  },
 );
+
+app.listen(PORT);

@@ -1,3 +1,5 @@
+const { NOTFOUND_CODE, ERROR_CODE, SERVER_ERROR_CODE } = require('./constants');
+
 class NotFound extends Error {
   constructor(message) {
     super(message);
@@ -5,17 +7,17 @@ class NotFound extends Error {
   }
 }
 
-const setErrors = (res, err) => {
+const sendErrors = (res, err) => {
   if (err.name === 'NotFoundError') {
-    return res.status(404).send({ message: `${err.message}` });
+    return res.status(NOTFOUND_CODE).send({ message: `${err.message}` });
   }
   if (err.name === 'ValidationError' || err.name === 'CastError') {
-    return res.status(400).send({ message: `${err.message}` });
+    return res.status(ERROR_CODE).send({ message: `${err.message}` });
   }
-  return res.status(500).send({ message: `${err.message}` });
+  return res.status(SERVER_ERROR_CODE).console.log(`${err.message}`);
 };
 
 module.exports = {
-  setErrors,
+  sendErrors,
   NotFound,
 };

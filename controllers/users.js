@@ -1,10 +1,11 @@
 const User = require('../models/user');
-const { setErrors, NotFound } = require('../utils/errors');
+const { sendErrors, NotFound } = require('../utils/errors');
+const CREATED_CODE = require('../utils/constants');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => setErrors(res, err));
+    .then((users) => res.send(users))
+    .catch((err) => sendErrors(res, err));
 };
 
 const getUserById = (req, res) => {
@@ -12,26 +13,26 @@ const getUserById = (req, res) => {
     .orFail(() => {
       throw new NotFound('Пользователя с указанным id не существует');
     })
-    .then((user) => res.status(200).send({
+    .then((user) => res.send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
       _id: user._id,
     }))
-    .catch((err) => setErrors(res, err));
+    .catch((err) => sendErrors(res, err));
 };
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({
+    .then((user) => res.status(CREATED_CODE).send({
       name: user.name,
       about: user.about,
       avatar: user.avatar,
       _id: user._id,
     }))
-    .catch((err) => setErrors(res, err));
+    .catch((err) => sendErrors(res, err));
 };
 
 const updateUserInfo = (req, res) => {
@@ -45,14 +46,14 @@ const updateUserInfo = (req, res) => {
       throw new NotFound('Такого пользователя не существует');
     })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         name: user.name,
         about: user.about,
         avatar: user.avatar,
         _id: user._id,
       });
     })
-    .catch((err) => setErrors(res, err));
+    .catch((err) => sendErrors(res, err));
 };
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
@@ -61,15 +62,18 @@ const updateAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
+    .orFail(() => {
+      throw new NotFound('Такого пользователя не существует');
+    })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         name: user.name,
         about: user.about,
         avatar: user.avatar,
         _id: user._id,
       });
     })
-    .catch((err) => setErrors(res, err));
+    .catch((err) => sendErrors(res, err));
 };
 
 module.exports = {
