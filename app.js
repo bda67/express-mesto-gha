@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { PORT = 3000 } = process.env;
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
+const { NOTFOUND_CODE } = require('./utils/constants');
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use('/cards', routerCards);
 app.use('/users', routerUsers);
 app.use('*', (req, res) => {
-  res.status(404).send({
+  res.status(NOTFOUND_CODE).send({
     message: 'Такой страницы не существует',
   });
 });

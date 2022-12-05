@@ -14,7 +14,7 @@ const sendErrors = (res, err) => {
   if (err.name === 'ValidationError' || err.name === 'CastError') {
     return res.status(ERROR_CODE).send({ message: `${err.message}` });
   }
-  return res.status(SERVER_ERROR_CODE).console.log(`${err.message}`);
+  return res.status(SERVER_ERROR_CODE).send({ message: `${err.message}` });
 };
 
 module.exports = {
