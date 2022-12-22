@@ -1,6 +1,18 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { sendErrors, NotFound } = require('../utils/errors');
-const { CREATED_CODE } = require('../utils/constants');
+const { DataError, NotFound } = require('../errors/errors');
+
+function fundUser(res, next, userId) {
+  User.findById(userId)
+  .orFail(new NotFound('Пользователь не найден'))
+  .then((user) => res.send({ user }))
+  .catch((err) => {
+    if(err.name === 'CastError') {
+      next(new )
+    }
+  })
+}
 
 const getUsers = (req, res) => {
   User.find({})
@@ -23,16 +35,36 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED_CODE).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      _id: user._id,
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
     }))
+    .then((user) => {
+      const newUser = user.toObject();
+      delete newUser.password;
+      res.send(newUser);
+    })
     .catch((err) => sendErrors(res, err));
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+  .select('+password')
+  .then((user) => {
+    if(!user) {прописать ошибку авторизации}
+    return bcrypt.compare(password, user.password)
+    .then((matched) => {
+      if(!matched) { ошибка авторизации}
+      const token = jwt.sign({  _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      return res.send({ token });
+    });
+  })
+  .catch(next);
 };
 
 const updateUserInfo = (req, res) => {
@@ -80,6 +112,7 @@ module.exports = {
   getUsers,
   getUserById,
   createUser,
+  login,
   updateUserInfo,
   updateAvatar,
 };

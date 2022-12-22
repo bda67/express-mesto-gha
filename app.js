@@ -5,6 +5,7 @@ const { PORT = 3000 } = process.env;
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
 const { NOTFOUND_CODE } = require('./utils/constants');
+const { login, createUser } = require('./controllers/users');
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use('*', (req, res) => {
     message: 'Такой страницы не существует',
   });
 });
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 mongoose.connect(
   'mongodb://127.0.0.1/dbmestogha',
