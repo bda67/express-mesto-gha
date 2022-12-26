@@ -29,14 +29,10 @@ app.use('*', (req, res) => {
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-mongoose.connect(
-  'mongodb://127.0.0.1/dbmestogha',
-  {
-    useNewUrlParser: true,
-  },
-  () => {
+mongoose.connect('mongodb://127.0.0.1/dbmestogha')
+  .then(
     app.listen(PORT, () => {
       console.log(`App listening on ${PORT}`);
-    });
-  },
-);
+    }),
+  )
+  .catch((err) => console.log(err));
