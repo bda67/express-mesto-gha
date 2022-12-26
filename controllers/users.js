@@ -22,7 +22,7 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   findUser(res, next, req.params.userId);
 };
 
@@ -71,7 +71,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const updateUserInfo = (req, res) => {
+const updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -89,9 +89,15 @@ const updateUserInfo = (req, res) => {
         _id: user._id,
       });
     })
-    .catch((err) => sendErrors(res, err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new DataError('Переданы некорректиные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -109,7 +115,13 @@ const updateAvatar = (req, res) => {
         _id: user._id,
       });
     })
-    .catch((err) => sendErrors(res, err));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new DataError('Указаны некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports = {

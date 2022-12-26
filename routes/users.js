@@ -3,7 +3,6 @@ const routerUsers = require('express').Router();
 const {
   getUsers,
   getUserById,
-  createUser,
   updateUserInfo,
   updateAvatar,
 } = require('../controllers/users');

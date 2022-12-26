@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: (email) => validator.isEmail(email),
       message: 'Неверный формат e-mail',
-    }
+    },
   },
   password: {
     type: String,
