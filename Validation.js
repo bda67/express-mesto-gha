@@ -8,7 +8,7 @@ const validationGetUserById = celebrate({
 });
 
 const validationUpdateUserInfo = celebrate({
-  body: Joi.onject().keys({
+  body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
@@ -55,7 +55,7 @@ const validationCreateUser = celebrate({
   }),
 });
 
-const validatiobLogin = celebrate({
+const validationLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
@@ -63,7 +63,7 @@ const validatiobLogin = celebrate({
 });
 
 module.exports = {
-  validatiobLogin,
+  validationLogin,
   validationCreateUser,
   validationDislikeCard,
   validationLikeCard,

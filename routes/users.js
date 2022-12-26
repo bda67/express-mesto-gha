@@ -7,9 +7,15 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 
+const {
+  validationUpdateAvatar,
+  validationUpdateUserInfo,
+  validationGetUserById,
+} = require('../Validation');
+
 routerUsers.get('/', getUsers);
-routerUsers.get('/:userId', getUserById);
-routerUsers.patch('/me', updateUserInfo);
-routerUsers.patch('/me/avatar', updateAvatar);
+routerUsers.get('/:userId', validationGetUserById, getUserById);
+routerUsers.patch('/me', validationUpdateUserInfo, updateUserInfo);
+routerUsers.patch('/me/avatar', validationUpdateAvatar, updateAvatar);
 
 module.exports = routerUsers;
