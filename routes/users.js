@@ -13,7 +13,7 @@ const {
   validationGetUserById,
 } = require('../Validation');
 
-routerUsers.get('/', getUsers);
+routerUsers.get('/me', getUsers);
 routerUsers.get('/:userId', validationGetUserById, getUserById);
 routerUsers.patch('/me', validationUpdateUserInfo, updateUserInfo);
 routerUsers.patch('/me/avatar', validationUpdateAvatar, updateAvatar);
