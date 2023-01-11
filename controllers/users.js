@@ -16,21 +16,21 @@ function findUser(res, next, userId) {
     });
 }
 
-const getUsers = (req, res, next) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(next);
 };
 
-const getUserById = (req, res, next) => {
+module.exports.getUserById = (req, res, next) => {
   findUser(res, next, req.params.userId);
 };
 
-const getUserInfo = (req, res, next) => {
+module.exports.getUserInfo = (req, res, next) => {
   findUser(res, next, req.user._id);
 };
 
-const createUser = (req, res, next) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -54,7 +54,7 @@ const createUser = (req, res, next) => {
     });
 };
 
-const login = (req, res, next) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findOne({ email })
@@ -71,7 +71,7 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-const updateUserInfo = (req, res, next) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -97,7 +97,7 @@ const updateUserInfo = (req, res, next) => {
       }
     });
 };
-const updateAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -122,14 +122,4 @@ const updateAvatar = (req, res, next) => {
         next(err);
       }
     });
-};
-
-module.exports = {
-  getUsers,
-  getUserById,
-  getUserInfo,
-  createUser,
-  login,
-  updateUserInfo,
-  updateAvatar,
 };
