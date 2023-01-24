@@ -3,10 +3,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { DataError, NotFound, AuthError } = require('../errors/errors');
 
-function findUser(res, next, userId) {
-  User.findById(userId)
+/*function findUser(res, req, next) {
+  User.findById(req.user._id)
     .orFail(new NotFound('Пользователь не найден'))
-    .then((user) => res.send({ user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new DataError('Невалидный Id'));
@@ -14,7 +14,7 @@ function findUser(res, next, userId) {
         next(err);
       }
     });
-}
+}*/
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -23,11 +23,24 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  findUser(res, next, req.params.userId);
+  User.findById(req.params.userId)
+    .orFail(() => {
+      throw new NotFound('Пользователя с таким ид не найдено')
+    })
+    .then((user) => res.send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new DataError('Неверный запрос'))
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  findUser(res, next, req.user._id);
+  User.findById(req.user._id)
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -65,7 +78,7 @@ module.exports.login = (req, res, next) => {
         .then((matched) => {
           if (!matched) { throw new AuthError('Неверный логин или пароль'); }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-          return res.send({ token });
+          return res.status(200).send({ token });
         });
     })
     .catch(next);

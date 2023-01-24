@@ -1,21 +1,21 @@
 const jwt = require('jsonwebtoken');
 const { AuthError } = require('../errors/errors');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+/*const { NODE_ENV, JWT_SECRET } = process.env;*/
+const bearerToken = (header) => header.replace('Bearer', '');
 
 module.exports = (req, res, next) => {
-  if (!req.cookies.jwt) {
-    next(new AuthError('Вы не авторизированы'));
+  const { authorization } = req.headers;
+  if (!authorization) {
+    throw new AuthError('Вы не авторизированы');
   }
-  const token = req.cookies.jwt;
+  const token = bearerToken(authorization);
   let playload;
 
   try {
-    playload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key');
-    req.users = playload;
-    next();
+    playload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    next(new AuthError('Вы не авторизированы'));
+    throw new AuthError('Вы не авторизированы');
   }
   req.user = playload;
   return next();

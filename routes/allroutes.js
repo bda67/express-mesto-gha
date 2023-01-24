@@ -10,7 +10,7 @@ router.use(auth);
 router.use('/users', require('./users'));
 router.use('/cards', require('./cards'));
 
-router.use('*', (req, res, next) => {
+router.use(auth, (req, res, next) => {
   next(new NotFound('К сожалению, такой страницы не сущетсвует :('));
 });
 
