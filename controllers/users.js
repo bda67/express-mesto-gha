@@ -3,19 +3,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { DataError, NotFound, AuthError } = require('../errors/errors');
 
-/*function findUser(res, req, next) {
-  User.findById(req.user._id)
-    .orFail(new NotFound('Пользователь не найден'))
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new DataError('Невалидный Id'));
-      } else {
-        next(err);
-      }
-    });
-}*/
-
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
@@ -25,12 +12,12 @@ module.exports.getUsers = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new NotFound('Пользователя с таким ид не найдено')
+      throw new NotFound('Пользователя с таким ид не найдено');
     })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new DataError('Неверный запрос'))
+        next(new DataError('Неверный запрос'));
       } else {
         next(err);
       }
