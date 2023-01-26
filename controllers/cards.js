@@ -15,7 +15,7 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new DataError('Некорректные данные')):
+        next(new DataError('Некорректные данные'));
       } else {
         next(err);
       }
@@ -28,23 +28,23 @@ const deleteCard = (req, res, next) => {
       throw new NotFound('Карточка с таким id не найдена');
     })
     .then((card) => {
-    if (card.owner.toString() !== req.user._id) {
-      throw new ForbiddenError('Вы не можете удалять карточки других пользователей')
-    }
-    card.remove()
-    .then(() => res.send(card))
-    .catch(next);
-  })
+      if (card.owner.toString() !== req.user._id) {
+        throw new ForbiddenError('Вы не можете удалять карточки других пользователей');
+      }
+      card.remove()
+        .then(() => res.send(card))
+        .catch(next);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new DataError('Некорректные данные'))
+        next(new DataError('Некорректные данные'));
       } else {
-        next(err)
+        next(err);
       }
     });
 };
 
-const likeCard = (req, res) => {
+const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -55,13 +55,13 @@ const likeCard = (req, res) => {
       throw new NotFound('Карточка с таким id не найдена');
     })
     .then((card) => {
-      res.send(card)
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new DataError('Некорректные данные'))
+        next(new DataError('Некорректные данные'));
       } else {
-        next(err)
+        next(err);
       }
     });
 };
@@ -77,13 +77,13 @@ const dislikeCard = (req, res, next) => {
       throw new NotFound('Карточка с таким id не найдена');
     })
     .then((card) => {
-      res.send(card)
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new DataError('Некорректные данные'))
+        next(new DataError('Некорректные данные'));
       } else {
-        next(err)
+        next(err);
       }
     });
 };

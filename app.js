@@ -18,8 +18,8 @@ app.use(errors());
 
 app.use(errorHandler);
 
-mongoose.connect('mongodb://localhost:27017/dbmestogha');
-
-app.listen(PORT, () => {
-  console.log(`App listening on ${PORT}`);
-});
+mongoose.connect('mongodb://localhost:27017/dbmestogha')
+  .then(app.listen(PORT, () => {
+    console.log(`App listening on ${PORT}`);
+  }))
+  .catch((err) => console.log(err));
