@@ -8,11 +8,7 @@ const {
   getUserInfo,
 } = require('../controllers/users');
 
-const {
-  validationUpdateAvatar,
-  validationUpdateUserInfo,
-  validationGetUserById,
-} = require('../Validation');
+const { validationUpdateAvatar, validationUpdateUserInfo, validationGetUserById } = require('../Validation');
 
 routerUsers.get('/', getUsers);
 routerUsers.get('/me', getUserInfo);
