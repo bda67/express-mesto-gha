@@ -12,13 +12,13 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-mongoose.connect('mongodb://localhost:27017/dbmestogha');
-
 app.use('/', router);
 
 app.use(errors());
 
 app.use(errorHandler);
+
+mongoose.connect('mongodb://localhost:27017/dbmestogha');
 
 app.listen(PORT, () => {
   console.log(`App listening on ${PORT}`);
