@@ -1,20 +1,20 @@
 const jwt = require('jsonwebtoken');
-const { AuthError } = require('../errors/errors');
+const { AuthError } = require('../errors/AllErrors');
 
-const bearerToken = (header) => header.replace('Bearer', '');
-
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
-    return next(new AuthError('Вы не авторизированы поч'));
+    return next(new AuthError('Ошибка авторизации'));
   }
-  const token = bearerToken(authorization);
+  const token = req.cookies.jwt;
   let playload;
   try {
     playload = jwt.verify(token, 'some-secret-key');
   } catch (err) {
-    return next(new AuthError('Вы не авторизированы fghm,'));
+    return next(new AuthError('Вы не авторизированы fghm'));
   }
   req.user = playload;
   return next();
 };
+
+module.exports = auth;

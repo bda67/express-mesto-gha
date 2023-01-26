@@ -1,15 +1,15 @@
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { DataError, NotFound, AuthError } = require('../errors/errors');
+const { DataError, NotFound } = require('../errors/AllErrors');
 
-module.exports.getUsers = (req, res, next) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch(next);
 };
 
-module.exports.getUserById = (req, res, next) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NotFound('Пользователя с таким ид не найдено');
@@ -24,19 +24,24 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-module.exports.getUserInfo = (req, res, next) => {
+const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send(user))
     .catch(next);
 };
 
-module.exports.createUser = (req, res, next) => {
+const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt.hash(password, 10)
+  bcrypt
+    .hash(password, 10)
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
     }))
     .then((user) => {
       const newUser = user.toObject();
@@ -54,24 +59,22 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res, next) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email })
-    .select('+password')
+  User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) { throw new AuthError('Неверный логин или пароль'); }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (!matched) { throw new AuthError('Неверный логин или пароль'); }
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-          return res.status(200).send({ token });
-        });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .send({ message: 'Вы авторизованы' });
     })
     .catch(next);
 };
 
-module.exports.updateUserInfo = (req, res, next) => {
+const updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -97,7 +100,7 @@ module.exports.updateUserInfo = (req, res, next) => {
       }
     });
 };
-module.exports.updateAvatar = (req, res, next) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -122,4 +125,14 @@ module.exports.updateAvatar = (req, res, next) => {
         next(err);
       }
     });
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  getUserInfo,
+  createUser,
+  login,
+  updateUserInfo,
+  updateAvatar,
 };
