@@ -3,7 +3,6 @@ const { DataError, NotFound, ForbiddenError } = require('../errors/AllErrors');
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((cards) => res.send({ cards }))
     .catch(next);
 };
@@ -23,7 +22,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(() => {
       throw new NotFound('Карточка с таким id не найдена');
     })
@@ -50,7 +49,6 @@ const likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .populate(['owner', 'likes'])
     .orFail(() => {
       throw new NotFound('Карточка с таким id не найдена');
     })
@@ -72,7 +70,6 @@ const dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .populate(['owner', 'likes'])
     .orFail(() => {
       throw new NotFound('Карточка с таким id не найдена');
     })

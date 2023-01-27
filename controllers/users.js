@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { DataError, NotFound } = require('../errors/AllErrors');
+const { DataError, NotFound, ConflictError } = require('../errors/AllErrors');
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -52,7 +52,7 @@ const createUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new DataError('Некорректные данные'));
       } else if (err.code === 11000) {
-        res.status(409).send({ message: `${err.message}` });
+        next(new ConflictError('Указанный e-mail принадлежит другому пользователю'));
       } else {
         next(err);
       }
